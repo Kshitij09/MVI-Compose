@@ -1,22 +1,17 @@
 import com.kshitijpatil.mvicompose.Libs
 
 plugins {
-    id 'com.android.application'
+    id 'com.android.dynamic-feature'
     id 'kotlin-android'
     id 'kotlin-kapt'
-    id 'dagger.hilt.android.plugin'
 }
 
 android {
     compileSdkVersion buildConfig.compileSdk
 
     defaultConfig {
-        applicationId "com.kshitijpatil.mvicompose"
         minSdkVersion buildConfig.minSdk
         targetSdkVersion buildConfig.targetSdk
-        versionCode 1
-        versionName "1.0"
-
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
     }
 
@@ -26,10 +21,12 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
     }
+
     compileOptions {
         sourceCompatibility JavaVersion.VERSION_1_8
         targetCompatibility JavaVersion.VERSION_1_8
     }
+
     kotlinOptions {
         jvmTarget = '1.8'
         useIR = true
@@ -39,55 +36,21 @@ android {
         freeCompilerArgs += '-Xallow-jvm-ir-dependencies'
 
     }
+
     buildFeatures {
         compose true
     }
+
     composeOptions {
         kotlinCompilerVersion Libs.Kotlin.version
         kotlinCompilerExtensionVersion Libs.AndroidX.Compose.version
     }
-    dynamicFeatures = [':examples:simpleflow']
 }
 
 dependencies {
-
-    api Libs.Kotlin.stdlib
-    api Libs.AndroidX.coreKtx
-    api Libs.AndroidX.appcompat
-    api Libs.Mdc.material
-
-    api Libs.AndroidX.Lifecycle.viewmodel
-    api Libs.AndroidX.Lifecycle.runtimeKtx
-    api Libs.AndroidX.Lifecycle.livedata
-
-    // jetpack compose
-    api Libs.AndroidX.Compose.runtime
-    api Libs.AndroidX.Compose.foundation
-    api Libs.AndroidX.Compose.ui
-    api Libs.AndroidX.Compose.layout
-    api Libs.AndroidX.Compose.material
-    api Libs.AndroidX.Compose.tooling
-
-    api Libs.AndroidX.coreKtx
-    api Libs.AndroidX.Fragment.fragment
-    api Libs.AndroidX.Fragment.fragmentKtx
-    api Libs.AndroidX.Navigation.fragment
-
-    implementation Libs.Hilt.library
-    kapt Libs.Hilt.compiler
-
-    // retrofit
-    implementation Libs.Retrofit.retrofit
-    implementation Libs.Retrofit.converterMoshi
-    implementation Libs.Moshi.moshiKotlin
-
-    implementation Libs.AndroidX.Hilt.viewmodel
-    kapt Libs.AndroidX.Hilt.compiler
-
-    implementation Libs.Accompanist.insets
+    implementation project(":app")
 
     testImplementation Libs.junit
     androidTestImplementation Libs.AndroidX.Test.Ext.junit
     androidTestImplementation Libs.AndroidX.Test.espressoCore
-
 }
