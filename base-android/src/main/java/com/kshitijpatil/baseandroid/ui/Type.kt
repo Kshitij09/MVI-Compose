@@ -1,4 +1,4 @@
-package com.kshitijpatil.mvicompose.ui
+package com.kshitijpatil.baseandroid.ui
 
 import androidx.compose.material.Typography
 import androidx.compose.ui.text.TextStyle

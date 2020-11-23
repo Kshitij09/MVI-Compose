@@ -1,3 +1,5 @@
 <resources>
     <string name="app_name">MVI Compose</string>
+    <string name="title_simpleflow">Simple Flow</string>
+    <string name="title_activity_simple_event_activity">Simple Events</string>
 </resources>

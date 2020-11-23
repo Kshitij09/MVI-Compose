@@ -1,4 +1,4 @@
-package com.kshitijpatil.mvicompose.ui
+package com.kshitijpatil.baseandroid.ui
 
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.Shapes
