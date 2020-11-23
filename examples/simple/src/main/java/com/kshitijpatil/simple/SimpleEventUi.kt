@@ -4,12 +4,10 @@ import androidx.compose.foundation.border
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.*
-import androidx.compose.runtime.Composable
-import androidx.compose.runtime.Providers
+import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
-import androidx.compose.ui.text.TextStyle
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.ui.tooling.preview.Preview
@@ -17,19 +15,26 @@ import com.kshitijpatil.baseandroid.ui.MVIComposeTheme
 import com.kshitijpatil.simple.SimpleUiAction.GetFirstData
 import com.kshitijpatil.simple.SimpleUiAction.GetSecondData
 
-private const val untouchedMessage = "UI is Untouched"
+internal const val untouchedMessage = "UI is Untouched"
 
-private typealias emptyLambda = () -> Unit
+internal typealias emptyLambda = () -> Unit
 
 fun Modifier.centerContent() = this.fillMaxSize().wrapContentSize()
+
+@Immutable
+data class FirstPageState(
+    val data: Async<String>,
+    val retryAction: () -> Unit
+)
 
 @Composable
 fun SimpleEventUi(
     viewState: SimpleEventViewState,
     actioner: (SimpleUiAction) -> Unit,
-    firstStateContent: @Composable (Async<String>, emptyLambda) -> Unit,
-    secondStateContent: @Composable (Async<String>, emptyLambda) -> Unit,
+    firstStateContent: @Composable (FirstPageState) -> Unit,
+    secondStateContent: @Composable (SecondPageState) -> Unit,
 ) {
+    val (pageUnlockState, setPageUnlockState) = remember { mutableStateOf(false) }
     Column {
         Column(modifier = Modifier.weight(0.8f)) {
             val boxModifier = Modifier
@@ -38,14 +43,21 @@ fun SimpleEventUi(
                 .weight(1f)
                 .border(1.dp, Color.LightGray, RoundedCornerShape(4.dp))
             Box(modifier = boxModifier) {
-                firstStateContent(
-                    viewState.firstData
-                ) { actioner(GetFirstData) }
+                val pageState = FirstPageState(
+                    data = viewState.firstData,
+                    retryAction = { actioner(GetFirstData) }
+                )
+                firstStateContent(pageState)
             }
             Box(modifier = boxModifier) {
-                secondStateContent(
+                /*secondStateContent(
                     viewState.secondData
-                ) { actioner(GetSecondData) }
+                ) { actioner(GetSecondData) }*/
+                val pageState = SecondPageState(
+                    setPageUnlocked = { setPageUnlockState(it) },
+                    retryAction = { actioner(GetSecondData) }
+                )
+                secondStateContent(pageState)
             }
         }
         Row(
@@ -57,7 +69,7 @@ fun SimpleEventUi(
                 Text("Load First Data")
             }
             Spacer(modifier = Modifier.width(32.dp))
-            Button(onClick = { actioner(GetSecondData) }) {
+            Button(onClick = { actioner(GetSecondData) }, enabled = pageUnlockState) {
                 Text("Load Second Data")
             }
         }
@@ -135,11 +147,14 @@ fun DataScreenPreview() {
             SimpleEventUi(
                 viewState = viewState,
                 actioner = {},
-                firstStateContent = { uiState, retryAction ->
-                    DataScreen(uiState, retryAction)
+                firstStateContent = { pageState ->
+                    DataScreen(pageState.data, pageState.retryAction)
                 },
-                secondStateContent = { uiState, retryAction ->
-                    DataScreen(uiState, retryAction)
+                secondStateContent = { pageState ->
+                    SecondNavHost(
+                        { pageState.setPageUnlocked(it) },
+                        { pageState.retryAction() }
+                    )
                 }
             )
         }

@@ -5,7 +5,6 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.ViewGroup.LayoutParams.MATCH_PARENT
-import androidx.activity.viewModels
 import androidx.compose.material.MaterialTheme
 import androidx.compose.material.Surface
 import androidx.compose.runtime.collectAsState
@@ -17,11 +16,10 @@ import androidx.lifecycle.lifecycleScope
 import com.kshitijpatil.baseandroid.ui.MVIComposeTheme
 import kotlinx.coroutines.ExperimentalCoroutinesApi
 import kotlinx.coroutines.channels.Channel
-import kotlinx.coroutines.channels.consume
 import kotlinx.coroutines.channels.consumeEach
 
 @OptIn(ExperimentalCoroutinesApi::class)
-class SimpleEventFragment: Fragment() {
+class SimpleEventFragment : Fragment() {
     private val pendingActions = Channel<SimpleUiAction>(Channel.BUFFERED)
     private val viewModel: SimpleEventViewModel by viewModels(factoryProducer = { SimpleEventsViewModelFactory() })
 
@@ -48,11 +46,14 @@ class SimpleEventFragment: Fragment() {
                     SimpleEventUi(
                         viewState = viewState,
                         actioner = { pendingActions.offer(it) },
-                        firstStateContent = { uiState, retryAction ->
-                            DataScreen(uiState, retryAction)
+                        firstStateContent = { pageState ->
+                            DataScreen(pageState.data, pageState.retryAction)
                         },
-                        secondStateContent = { uiState, retryAction ->
-                            DataScreen(uiState, retryAction)
+                        secondStateContent = { pageState ->
+                            SecondNavHost(
+                                { pageState.setPageUnlocked(it) },
+                                { pageState.retryAction() }
+                            )
                         }
                     )
                 }
