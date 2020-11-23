@@ -46,32 +46,11 @@ android {
         kotlinCompilerVersion Libs.Kotlin.version
         kotlinCompilerExtensionVersion Libs.AndroidX.Compose.version
     }
-    dynamicFeatures = [':examples:simpleflow']
 }
 
 dependencies {
-
-    api Libs.Kotlin.stdlib
-    api Libs.AndroidX.coreKtx
-    api Libs.AndroidX.appcompat
-    api Libs.Mdc.material
-
-    api Libs.AndroidX.Lifecycle.viewmodel
-    api Libs.AndroidX.Lifecycle.runtimeKtx
-    api Libs.AndroidX.Lifecycle.livedata
-
-    // jetpack compose
-    api Libs.AndroidX.Compose.runtime
-    api Libs.AndroidX.Compose.foundation
-    api Libs.AndroidX.Compose.ui
-    api Libs.AndroidX.Compose.layout
-    api Libs.AndroidX.Compose.material
-    api Libs.AndroidX.Compose.tooling
-
-    api Libs.AndroidX.coreKtx
-    api Libs.AndroidX.Fragment.fragment
-    api Libs.AndroidX.Fragment.fragmentKtx
-    api Libs.AndroidX.Navigation.fragment
+    implementation project(':base-android')
+    implementation project(':examples:simple')
 
     implementation Libs.Hilt.library
     kapt Libs.Hilt.compiler

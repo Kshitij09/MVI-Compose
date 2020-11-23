@@ -1,3 +1,4 @@
 rootProject.name = "MVI Compose"
 include ':app'
-include ':examples:simpleflow'
+include ':base-android'
+include ':examples:simple'
